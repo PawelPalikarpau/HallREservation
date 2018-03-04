@@ -1,0 +1,105 @@
+<div class="container" ng-app="app">
+  <div class="row">
+    <div class="col-md-4">
+      <div *ngIf="customers">
+        <label class="control-label" for="customerName">Customer Name:</label>
+        <br/>
+        <select class="form-control" id="customerName" name="customerName"
+                [(ngModel)]="customerSelected" (change)="getAllReservations()">
+          <option *ngFor="let customer of customers" [ngValue]="customer">{{customer.firstName}}</option>
+        </select>
+      </div>
+      <br/>
+      <div *ngIf="halls">
+        <label class="control-label" for="hallName">Hall Name:</label>
+        <br/>
+        <select class="form-control" id="hallName" name="hallName"
+                [(ngModel)]="hallSelected" (change)="getAllReservations()">
+          <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>
+        </select>
+      </div>
+      <br/>
+      <div *ngIf="customerSelected != null && hallSelected != null">
+        <input class="form-check-inline"
+               id="showMyReservations"
+               name="showMyReservations"
+               type="checkbox"
+               [checked]="showMyReservations"
+               (change)="showReservations()">
+        <label class="control-label" for="showMyReservations">
+          Show My Reservations
+        </label>
+      </div>
+      <hr style="background-color: darkgoldenrod">
+      <div *ngIf="startDate != null">
+        <form>
+          <label class="control-label" for="startDate">Start Date:</label>
+          <br/>
+          <label class="form-control" id="startDate">
+            {{ startDate | date: 'yyyy-MM-dd HH:mm' }}
+          </label>
+        </form>
+        <form>
+          <label class="control-label" for="endDate">End Date:</label>
+          <br/>
+          <select class="form-control" id="endDate" name="endDate" [(ngModel)]="endDate">
+            <option *ngFor="let date of betweenDates" [ngValue]="date">{{ date | date: 'yyyy-MM-dd HH:mm' }}</option>
+          </select>
+        </form>
+        <br/>
+        <button id="btn-reserve" type="button" class="btn btn-primary"
+                (click)="makeReservation()">
+          Make Reservation
+        </button>
+        <br/>
+        <br/>
+      </div>
+      <div *ngIf="showMyReservations">
+        <hr style="background-color: darkgoldenrod" *ngIf="showMyReservations && startDate != null"/>
+        <br/>
+        <table class="table table-bordered">
+          <tr>
+            <td><strong>Start Date - End Date</strong></td>
+            <td><strong>Remove</strong></td>
+          </tr>
+          <tr *ngFor="let reservation of customReservations">
+            <td>From:&nbsp;{{reservation.startDate | date : 'yyyy-MM-dd HH:mm'}}<br/>
+              To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{reservation.endDate | date : 'yyyy-MM-dd HH:mm'}}</td>
+            <td>
+              <button id="delete-btn"
+                      type="button"
+                      [ngClass]="'btn btn-danger'"
+              (click)="removeReservation(reservation)">Remove
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="customerSelected != null && hallSelected != null" class="col-md-8">
+      <table *ngIf="numberOfColumns" class="table table-bordered"
+             style="white-space: nowrap; width: 1%; text-align: center">
+        <tr>
+          <td></td>
+          <td *ngFor="let columnIndex of numberOfColumns">
+            {{table[columnIndex].topInfo.split(" ")[0]}}<br/>
+            {{table[columnIndex].topInfo.split(" ")[1]}}
+          </td>
+        </tr>
+        <tr *ngFor="let rowIndex of numberOfRows">
+          <td>{{table[0].leftInfo[rowIndex]}}</td>
+          <td *ngFor="let columnIndex of numberOfColumns">
+            <button id="btn-start-date"
+                    type="button"
+                    [ngClass]="getStyles(table[columnIndex].hours[rowIndex], 'class')"
+                    [disabled]="!isActiveButton(table[columnIndex].hours[rowIndex])"
+                    (click)="fillBetweenDates(table[columnIndex].hours[rowIndex])">
+              {{getStyles(table[columnIndex].hours[rowIndex], 'text')}}
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
