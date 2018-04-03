@@ -1,5 +1,7 @@
 # HallReservation
 
+This project is Spring Boot + CRUD/Hibernate + Rest Angular4 application.
+
 ## How to launch application
 - You must clone this project on your computer
 - You must configure database on your computer in cloned project
